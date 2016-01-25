@@ -26,13 +26,18 @@ PROCESS_THREAD(cc26xx_contiki_demo_process, ev, data)
 
 	while(1) {
 		int counterD = 0 ;
+		static int counterE = 0 ;
 
 		PROCESS_YIELD();
 
 		if(ev == PROCESS_EVENT_TIMER) {
 			if(data == &et) {
 				counterA++;
-				printf("5 secs passed, counters: %d %d %d %d\n", counterA, counterB, counterC, counterD);
+				counterB++;
+				counterC++;
+				counterD++;
+				counterE++;
+				printf("5 secs passed, counters: %d %d %d %d %d\n", counterA, counterB, counterC, counterD, counterE);
 				etimer_set(&et, CC26XX_DEMO_LOOP_INTERVAL);
 			}
 		}
