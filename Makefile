@@ -3,5 +3,5 @@ CONTIKI_PROJECT = cc26xx-contiki-demo
 
 all: $(CONTIKI_PROJECT)
 
-CONTIKI = ~/contiki
+CONTIKI = /home/user/contiki
 include $(CONTIKI)/Makefile.include
