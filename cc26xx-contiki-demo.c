@@ -12,15 +12,8 @@ PROCESS_THREAD(cc26xx_contiki_demo_process, ev, data)
 
 	PROCESS_BEGIN();
 
-	printf("Hello Contiki\nCC26XX contiki demo\n");
-
-	while(1) {
-
-		PROCESS_YIELD();
-
-		printf("From the loop\n");
-    
-	}
+	printf("Hello Contiki!!!\nCC26XX contiki demo\n");
 
 	PROCESS_END();
+
 }
