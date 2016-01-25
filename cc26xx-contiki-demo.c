@@ -8,11 +8,15 @@
 
 static struct etimer et;
 
+static int counterA = 0 ;
+int counterB = 0 ;
+
 PROCESS(cc26xx_contiki_demo_process, "cc26xx contiki demo process");
 AUTOSTART_PROCESSES(&cc26xx_contiki_demo_process);
 
 PROCESS_THREAD(cc26xx_contiki_demo_process, ev, data)
 {
+	int counterC = 0 ;
 
 	PROCESS_BEGIN();
 
@@ -21,13 +25,14 @@ PROCESS_THREAD(cc26xx_contiki_demo_process, ev, data)
 	etimer_set(&et, CC26XX_DEMO_LOOP_INTERVAL);
 
 	while(1) {
+		int counterD = 0 ;
 
 		PROCESS_YIELD();
 
 		if(ev == PROCESS_EVENT_TIMER) {
 			if(data == &et) {
-
-				printf("5 secs passed\n");
+				counterA++;
+				printf("5 secs passed, counters: %d %d %d %d\n", counterA, counterB, counterC, counterD);
 				etimer_set(&et, CC26XX_DEMO_LOOP_INTERVAL);
 			}
 		}
