@@ -7,7 +7,7 @@
 PROCESS(cc26xx_contiki_demo_process, "cc26xx contiki demo process");
 AUTOSTART_PROCESSES(&cc26xx_contiki_demo_process);
 
-ROCESS_THREAD(cc26xx_contiki_demo_process, ev, data)
+PROCESS_THREAD(cc26xx_contiki_demo_process, ev, data)
 {
 
 	PROCESS_BEGIN();
