@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#define CC26XX_DEMO_LOOP_INTERVAL       (CLOCK_SECOND * 5)
+#define CC26XX_DEMO_LOOP_INTERVAL       (CLOCK_SECOND * 20)
 
 static struct etimer et;
 
@@ -26,11 +26,11 @@ PROCESS_THREAD(cc26xx_contiki_demo_process, ev, data)
 		
 		leds_on(LEDS_ALL);
 
-		clock_delay(400);
+		clock_delay(2000);
 
 		leds_off(LEDS_ALL);
 
-		clock_delay(400);
+		clock_delay(2000);
 	}
 
 	etimer_set(&et, CC26XX_DEMO_LOOP_INTERVAL);
@@ -61,7 +61,7 @@ PROCESS_THREAD(cc26xx_contiki_demo_process, ev, data)
 					clock_delay(400);
 				}
 
-				printf("5 secs passed, time elapsed: %dSEC\n", counterA*5);
+				printf("5 secs passed, time elapsed: %dSEC\n", counterA*20);
 				etimer_set(&et, CC26XX_DEMO_LOOP_INTERVAL);
 			}
 		}
