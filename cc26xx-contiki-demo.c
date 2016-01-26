@@ -73,7 +73,7 @@ PROCESS_THREAD(cc26xx_contiki_demo_process, ev, data)
 				//	mt_exec(&thread);
 				//}
 
-				printf("100msecs passed, time elapsed: %fs\n", (float)counterA*0.5);
+				printf("100msecs passed, time elapsed: %ds\n", (int)(counterA*0.5));
 				etimer_set(&et, CC26XX_DEMO_LOOP_INTERVAL);
 			}
 		} 
@@ -99,7 +99,7 @@ PROCESS_THREAD(button_process, ev, data)
 			printf("Left button pushed\n");
 			watchdog_reboot();
 		} else if(ev == sensors_event && data ==  &button_right_sensor) {
-			printf("Right button pushed, time: %fs\n", (float)counterA*0.5);
+			printf("Right button pushed, time: %ds\n", (int)(counterA*0.5));
 			if(buzzer_state()) {
 				buzzer_stop();
 			} else {
