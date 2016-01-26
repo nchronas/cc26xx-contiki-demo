@@ -24,11 +24,11 @@ PROCESS_THREAD(cc26xx_contiki_demo_process, ev, data)
 
 	for(int i = 0; i < 3; i++) {
 		
-		leds_on(LEDS_ALL);
+		leds_on(LEDS_GREEN);
 
 		clock_delay(2000);
 
-		leds_off(LEDS_ALL);
+		leds_off(LEDS_GREEN);
 
 		clock_delay(2000);
 	}
@@ -36,7 +36,7 @@ PROCESS_THREAD(cc26xx_contiki_demo_process, ev, data)
 	etimer_set(&et, CC26XX_DEMO_LOOP_INTERVAL);
 
 	leds_on(LEDS_RED);
-	leds_off(LEDS_YELLOW);
+	leds_off(LEDS_GREEN);
 
 	while(1) {
 		static int counterA = 0 ;
@@ -47,18 +47,18 @@ PROCESS_THREAD(cc26xx_contiki_demo_process, ev, data)
 			if(data == &et) {
 				counterA++;
 
-				leds_toggle(LEDS_YELLOW);
+				leds_toggle(LEDS_GREEN);
 				leds_toggle(LEDS_RED);
 
 				for(int i = 0; i < 3; i++) {
 		
-					leds_on(LEDS_ALL);
+					leds_on(LEDS_GREEN);
 
-					clock_delay(400);
+					clock_delay(2000);
 
-					leds_off(LEDS_ALL);
+					leds_off(LEDS_GREEN);
 
-					clock_delay(400);
+					clock_delay(2000);
 				}
 
 				printf("5 secs passed, time elapsed: %dSEC\n", counterA*20);
