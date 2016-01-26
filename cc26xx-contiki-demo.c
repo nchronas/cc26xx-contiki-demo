@@ -42,9 +42,6 @@ PROCESS_THREAD(cc26xx_contiki_demo_process, ev, data)
 				counterA++;
 
 				leds_toggle(LEDS_ALL);
-				if(buzzer_state()) {
-					buzzer_stop();
-				}
 
 				printf("5 secs passed, time elapsed: %dSEC\n", counterA*5);
 				etimer_set(&et, CC26XX_DEMO_LOOP_INTERVAL);
