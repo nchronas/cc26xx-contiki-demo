@@ -19,6 +19,16 @@ PROCESS(button_process, "button process");
 PROCESS(cc26xx_contiki_demo_process, "cc26xx contiki demo process");
 AUTOSTART_PROCESSES(&cc26xx_contiki_demo_process, &button_process);
 
+void thread_entry(void *data)
+{
+	int counterB = 0;
+
+	whiler(1) {
+		printf("Looping in thread_entry %d\n", counterB);
+		counterB++;
+		mt_yield();
+	}
+}
 
 PROCESS_THREAD(cc26xx_contiki_demo_process, ev, data)
 {
@@ -93,15 +103,4 @@ PROCESS_THREAD(button_process, ev, data)
 
 	PROCESS_END();
 
-}
-
-void thread_entry(void *data)
-{
-	int counterB = 0;
-
-	whiler(1) {
-		printf("Looping in thread_entry %d\n", counterB);
-		counterB++;
-		mt_yield();
-	}
 }
