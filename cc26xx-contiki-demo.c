@@ -110,7 +110,7 @@ PROCESS_THREAD(button_process, ev, data)
 			if(buzzer_state()) {
 				buzzer_stop();
 			} else {
-				buzzer_start(1000);
+				//buzzer_start(1000);
 			}
 		}
 
@@ -129,6 +129,9 @@ PROCESS_THREAD(ledpack_process, ev, data)
 
 	ti_lib_gpio_dir_mode_set(DEV_LED_WHITE, GPIO_DIR_MODE_OUT);
 	ti_lib_gpio_pin_write(DEV_LED_WHITE, 1 );
+
+	ti_lib_gpio_dir_mode_set(DEV_LED_RED, GPIO_DIR_MODE_OUT);
+	ti_lib_gpio_pin_write(DEV_LED_RED, 0 );
 	while(1) {
 
 		PROCESS_YIELD();
