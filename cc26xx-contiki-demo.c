@@ -50,6 +50,17 @@ PROCESS_THREAD(cc26xx_contiki_demo_process, ev, data)
 				leds_toggle(LEDS_YELLOW);
 				leds_toggle(LEDS_RED);
 
+				for(int i = 0; i < 3; i++) {
+		
+					leds_on(LEDS_ALL);
+
+					clock_delay(400);
+
+					leds_off(LEDS_ALL);
+
+					clock_delay(400);
+				}
+
 				printf("5 secs passed, time elapsed: %dSEC\n", counterA*5);
 				etimer_set(&et, CC26XX_DEMO_LOOP_INTERVAL);
 			}
