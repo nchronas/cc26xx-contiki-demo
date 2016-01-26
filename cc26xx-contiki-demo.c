@@ -3,12 +3,13 @@
 #include "dev/watchdog.h"
 #include "button-sensor.h"
 #include "board-peripherals.h"
+#include "sys/mt.h"
 #include "ti-lib.h"
 
 #include <stdio.h>
 #include <stdint.h>
 
-#define CC26XX_DEMO_LOOP_INTERVAL       (CLOCK_SECOND * 5)
+#define CC26XX_DEMO_LOOP_INTERVAL       (CLOCK_SECOND / 2)
 
 static struct etimer et;
 static int counterA = 0 ;
@@ -21,8 +22,12 @@ AUTOSTART_PROCESSES(&cc26xx_contiki_demo_process, &button_process);
 
 PROCESS_THREAD(cc26xx_contiki_demo_process, ev, data)
 {
+	static struct mt_thread thread;
 
 	PROCESS_BEGIN();
+
+	
+	mt_start(&thread, thread_entry, NULL);
 
 	printf("Hello Contiki!!!\nCC26XX contiki demo\n");
 
@@ -43,8 +48,14 @@ PROCESS_THREAD(cc26xx_contiki_demo_process, ev, data)
 				counterA++;
 
 				leds_toggle(LEDS_ALL);
+				
 
-				printf("5 secs passed, time elapsed: %dSEC\n", counterA*5);
+				if(counterA % 2) {
+					printf("Starting thread\n");
+					mt_exec(&thread);
+				}
+
+				printf("100msecs passed, time elapsed: %fs\n", counterA*0.5);
 				etimer_set(&et, CC26XX_DEMO_LOOP_INTERVAL);
 			}
 		} 
@@ -70,7 +81,7 @@ PROCESS_THREAD(button_process, ev, data)
 			printf("Left button pushed\n");
 			watchdog_reboot();
 		} else if(ev == sensors_event && data ==  &button_right_sensor) {
-			printf("Right button pushed, time: %d\n", counterA*5);
+			printf("Right button pushed, time: %fs\n", counterA*0.5);
 			if(buzzer_state()) {
 				buzzer_stop();
 			} else {
@@ -82,4 +93,15 @@ PROCESS_THREAD(button_process, ev, data)
 
 	PROCESS_END();
 
+}
+
+void thread_entry(void *data)
+{
+	int counterB = 0;
+
+	whiler(1) {
+		printf("Looping in thread_entry %d\n", counterB);
+		counterB++;
+		mt_yield();
+	}
 }
