@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#define CC26XX_DEMO_LOOP_INTERVAL       (CLOCK_SECOND * 20)
+#define CC26XX_DEMO_LOOP_INTERVAL       (CLOCK_SECOND * 5)
 
 static struct etimer et;
 
@@ -30,8 +30,8 @@ PROCESS_THREAD(cc26xx_contiki_demo_process, ev, data)
 	while(1) {
 		static int counterA = 0 ;
 
-		leds_off(LEDS_RED);
-		leds_on(LEDS_GREEN);
+//		leds_off(LEDS_RED);
+//		leds_on(LEDS_GREEN);
 
 		PROCESS_YIELD();
 
@@ -41,7 +41,7 @@ PROCESS_THREAD(cc26xx_contiki_demo_process, ev, data)
 
 				leds_toggle(LEDS_CONF_ALL);
 
-				printf("5 secs passed, time elapsed: %dSEC\n", counterA*20);
+				printf("5 secs passed, time elapsed: %dSEC\n", counterA*5);
 				etimer_set(&et, CC26XX_DEMO_LOOP_INTERVAL);
 			}
 		}
