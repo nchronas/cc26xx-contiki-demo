@@ -12,13 +12,20 @@
 
 #define CC26XX_DEMO_LOOP_INTERVAL       (CLOCK_SECOND / 2)
 
+#define DEV_LED_WHITE					BOARD_IOID_DP0
+#define DEV_LED_GREEN 					BOARD_IOID_DP1
+#define DEV_LED_BLUE 					BOARD_IOID_DP2
+#define DEV_LED_RED 					BOARD_IOID_DP3
+
+
 static struct etimer et;
 static int counterA = 0 ;
 
 PROCESS(button_process, "button process");
+PROCESS(ledpack_process, "led audio devpack process");
 
 PROCESS(cc26xx_contiki_demo_process, "cc26xx contiki demo process");
-AUTOSTART_PROCESSES(&cc26xx_contiki_demo_process, &button_process);
+AUTOSTART_PROCESSES(&cc26xx_contiki_demo_process, &button_process, &ledpack_process);
 
 int uart_rx_callback(unsigned char c)
 {
@@ -106,6 +113,25 @@ PROCESS_THREAD(button_process, ev, data)
 				buzzer_start(1000);
 			}
 		}
+
+	}
+
+	PROCESS_END();
+
+}
+
+PROCESS_THREAD(ledpack_process, ev, data)
+{
+
+	PROCESS_BEGIN();
+
+	printf("Hello from led process\n");
+
+	ti_lib_gpio_dir_mode_set(DEV_LED_WHITE, GPIO_DIR_MODE_OUT);
+	ti_lib_gpio_pin_write(DEV_LED_WHITE, 1 );
+	while(1) {
+
+		PROCESS_YIELD();
 
 	}
 
