@@ -23,7 +23,7 @@ PROCESS_THREAD(cc26xx_contiki_demo_process, ev, data)
 
 	printf("Hello Contiki!!!\nCC26XX contiki demo\n");
 
-    buzzer_start(1000);
+    buzzer_start(500);
 
 	etimer_set(&et, CC26XX_DEMO_LOOP_INTERVAL);
 
@@ -52,7 +52,11 @@ PROCESS_THREAD(cc26xx_contiki_demo_process, ev, data)
 			watchdog_reboot();
 		} else if(ev == sensors_event && data ==  &button_right_sensor) {
 			printf("Right button pushed\n");
-			buzzer_start(500);
+			if(buzzer_state()) {
+				buzzer_stop();
+			} else {
+				buzzer_start(1000);
+	        }
 		}
 
 	}
