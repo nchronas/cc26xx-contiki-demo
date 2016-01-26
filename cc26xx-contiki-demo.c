@@ -46,7 +46,7 @@ void thread_entry(void *data)
 
 PROCESS_THREAD(cc26xx_contiki_demo_process, ev, data)
 {
-	static struct mt_thread thread;
+	//static struct mt_thread thread;
 
 	PROCESS_BEGIN();
 	
@@ -104,7 +104,7 @@ PROCESS_THREAD(button_process, ev, data)
 
 		if(ev == sensors_event && data == &button_left_sensor ) {
 			printf("Left button pushed\n");
-			watchdog_reboot();
+			//watchdog_reboot();
 		} else if(ev == sensors_event && data ==  &button_right_sensor) {
 			printf("Right button pushed, time: %ds\n", (int)(counterA*0.5));
 			if(buzzer_state()) {
