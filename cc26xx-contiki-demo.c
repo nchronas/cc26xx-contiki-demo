@@ -16,7 +16,7 @@ static int counterA = 0 ;
 PROCESS(button_process, "button process");
 
 PROCESS(cc26xx_contiki_demo_process, "cc26xx contiki demo process");
-AUTOSTART_PROCESSES(&cc26xx_contiki_demo_process);
+AUTOSTART_PROCESSES(&cc26xx_contiki_demo_process, &button_process);
 
 
 PROCESS_THREAD(cc26xx_contiki_demo_process, ev, data)
@@ -34,9 +34,6 @@ PROCESS_THREAD(cc26xx_contiki_demo_process, ev, data)
 			leds_off(LEDS_RED);
 			leds_on(LEDS_GREEN);
 
-		} else if(counterA == 1) {
-			printf("Starting button process\n");
-			AUTOSTART_PROCESSES(&button_process);
 		}
 
 		PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
