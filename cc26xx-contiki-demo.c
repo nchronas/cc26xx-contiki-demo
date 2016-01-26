@@ -23,7 +23,7 @@ void thread_entry(void *data)
 {
 	int counterB = 0;
 
-	whiler(1) {
+	while(1) {
 		printf("Looping in thread_entry %d\n", counterB);
 		counterB++;
 		mt_yield();
