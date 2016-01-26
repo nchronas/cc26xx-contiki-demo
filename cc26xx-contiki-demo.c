@@ -12,11 +12,15 @@
 
 #define CC26XX_DEMO_LOOP_INTERVAL       (CLOCK_SECOND / 2)
 
-#define DEV_LED_WHITE					BOARD_IOID_DP0
-#define DEV_LED_GREEN 					BOARD_IOID_DP1
-#define DEV_LED_BLUE 					BOARD_IOID_DP2
-#define DEV_LED_RED 					BOARD_IOID_DP3
+#define DEV_LED_IOID_WHITE				BOARD_IOID_DP0
+#define DEV_LED_IOID_GREEN 				BOARD_IOID_DP1
+#define DEV_LED_IOID_BLUE 				BOARD_IOID_DP2
+#define DEV_LED_IOID_RED 				BOARD_IOID_DP3
 
+#define DEV_LED_WHITE					(1 << DEV_LED_WHITE)
+#define DEV_LED_GREEN 					(1 << DEV_LED_GREEN)
+#define DEV_LED_BLUE 					(1 << DEV_LED_BLUE)
+#define DEV_LED_RED 					(1 << DEV_LED_WHITE)
 
 static struct etimer et;
 static int counterA = 0 ;
@@ -30,6 +34,11 @@ AUTOSTART_PROCESSES(&cc26xx_contiki_demo_process, &button_process, &ledpack_proc
 int uart_rx_callback(unsigned char c)
 {
 	cc26xx_uart_write_byte(c);
+	if(c == 'a') {
+		ti_lib_gpio_pin_write(DEV_LED_WHITE, 1);
+	} else if(c == 's') {
+		ti_lib_gpio_pin_write(DEV_LED_WHITE, 0);
+	} 
 	return 1;
 }
 
@@ -130,16 +139,12 @@ PROCESS_THREAD(ledpack_process, ev, data)
 
 	while(1) {
 
-		ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_WHITE);
-		ti_lib_ioc_io_port_pull_set(DEV_LED_WHITE, IOC_IOPULL_UP);
-		ti_lib_gpio_pin_write(DEV_LED_WHITE, 1);
-
-		ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_RED);
-		ti_lib_ioc_io_port_pull_set(DEV_LED_RED, IOC_IOPULL_UP);
+		ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_IOID_WHITE);
+		ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_IOID_GREEN);
+		ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_IOID_RED);
+		ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_IOID_BLUE);
+		
 		ti_lib_gpio_pin_write(DEV_LED_RED, 0);
-
-		ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_GREEN);
-		ti_lib_ioc_io_port_pull_set(DEV_LED_RED, IOC_IOPULL_UP);
 		ti_lib_gpio_pin_write(DEV_LED_GREEN, 1);
 
 		PROCESS_YIELD();
