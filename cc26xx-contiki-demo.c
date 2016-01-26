@@ -47,6 +47,13 @@ PROCESS_THREAD(cc26xx_contiki_demo_process, ev, data)
 				printf("5 secs passed, time elapsed: %dSEC\n", counterA*5);
 				etimer_set(&et, CC26XX_DEMO_LOOP_INTERVAL);
 			}
+		} else if(ev == sensors_event) {
+			if(data ==  &button_left_sensor) {
+				watchdog_reboot();
+			} else if(data ==  &button_right_sensor) {
+				buzzer_start(500);
+			}
+
 		}
 	}
 
