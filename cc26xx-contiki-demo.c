@@ -49,8 +49,10 @@ PROCESS_THREAD(cc26xx_contiki_demo_process, ev, data)
 			}
 		} else if(ev == sensors_event) {
 			if(data ==  &button_left_sensor) {
+				printf("Left button pushed\n");
 				watchdog_reboot();
 			} else if(data ==  &button_right_sensor) {
+				printf("Right button pushed\n");
 				buzzer_start(500);
 			}
 
