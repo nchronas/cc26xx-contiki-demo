@@ -23,7 +23,7 @@ PROCESS_THREAD(cc26xx_contiki_demo_process, ev, data)
 
 	printf("Hello Contiki!!!\nCC26XX contiki demo\n");
 
-    buzzer_start(500);
+    buzzer_start(1000);
 
 	etimer_set(&et, CC26XX_DEMO_LOOP_INTERVAL);
 
