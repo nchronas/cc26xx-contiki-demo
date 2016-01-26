@@ -80,7 +80,7 @@ PROCESS_THREAD(cc26xx_contiki_demo_process, ev, data)
 				//	mt_exec(&thread);
 				//}
 
-				printf("100msecs passed, time elapsed: %ds\n", (int)(counterA*0.5));
+				printf("500msecs passed, time elapsed: %ds\n", (int)(counterA*0.5));
 				etimer_set(&et, CC26XX_DEMO_LOOP_INTERVAL);
 			}
 		} 
@@ -127,11 +127,14 @@ PROCESS_THREAD(ledpack_process, ev, data)
 
 	printf("Hello from led process\n");
 
-	ti_lib_gpio_dir_mode_set(DEV_LED_WHITE, GPIO_DIR_MODE_OUT);
-	ti_lib_gpio_pin_write(DEV_LED_WHITE, 1 );
+	ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_WHITE);
+	ti_lib_gpio_pin_write(DEV_LED_WHITE, 1);
 
-	ti_lib_gpio_dir_mode_set(DEV_LED_RED, GPIO_DIR_MODE_OUT);
-	ti_lib_gpio_pin_write(DEV_LED_RED, 0 );
+	//ti_lib_gpio_dir_mode_set(DEV_LED_WHITE, GPIO_DIR_MODE_OUT);
+	//ti_lib_gpio_pin_write(DEV_LED_WHITE, 1 );
+
+	//ti_lib_gpio_dir_mode_set(DEV_LED_RED, GPIO_DIR_MODE_OUT);
+	//ti_lib_gpio_pin_write(DEV_LED_RED, 0 );
 	while(1) {
 
 		PROCESS_YIELD();
