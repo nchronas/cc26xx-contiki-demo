@@ -22,10 +22,10 @@ PROCESS_THREAD(cc26xx_contiki_demo_process, ev, data)
 
 	printf("Hello Contiki!!!\nCC26XX contiki demo\n");
 
+	etimer_set(&et, CC26XX_DEMO_LOOP_INTERVAL);
+
 	leds_on(LEDS_RED);
 	leds_off(LEDS_GREEN);
-
-	etimer_set(&et, CC26XX_DEMO_LOOP_INTERVAL);
 
 	while(1) {
 		static int counterA = 0 ;
