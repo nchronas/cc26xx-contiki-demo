@@ -39,7 +39,7 @@ PROCESS_THREAD(cc26xx_contiki_demo_process, ev, data)
 			AUTOSTART_PROCESSES(&button_process);
 		}
 
-		PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et);
+		PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
 
 		if(ev == PROCESS_EVENT_TIMER) {
 			if(data == &et) {
