@@ -130,6 +130,12 @@ PROCESS_THREAD(ledpack_process, ev, data)
 	ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_WHITE);
 	ti_lib_gpio_pin_write(DEV_LED_WHITE, 1);
 
+	ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_RED);
+	ti_lib_gpio_pin_write(DEV_LED_RED, 0);
+
+	ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_GREEN);
+	ti_lib_gpio_pin_write(DEV_LED_GREEN, 1);
+
 	//ti_lib_gpio_dir_mode_set(DEV_LED_WHITE, GPIO_DIR_MODE_OUT);
 	//ti_lib_gpio_pin_write(DEV_LED_WHITE, 1 );
 
