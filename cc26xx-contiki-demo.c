@@ -152,6 +152,13 @@ void led_pwm(int freq, uint32_t ioid_pin) {
 
 }
 
+void led_pwm_update(int freq, uint32_t ioid_pin) {
+
+    ti_lib_timer_load_set(GPT0_BASE, TIMER_A, freq);
+    ti_lib_timer_match_set(GPT0_BASE, TIMER_A, 0);
+
+}
+
 PROCESS_THREAD(ledpack_process, ev, data)
 {
 
@@ -171,7 +178,7 @@ PROCESS_THREAD(ledpack_process, ev, data)
 		if(ev == PROCESS_EVENT_TIMER) {
 			if(data == &et2) {
 
-				led_pwm(cnt, DEV_LED_IOID_WHITE); 
+				led_pwm_update(cnt, DEV_LED_IOID_WHITE); 
 
 				if(cnt < 14000) {
 					cnt += 100;
