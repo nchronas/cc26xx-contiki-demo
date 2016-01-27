@@ -22,7 +22,7 @@
 #define DEV_LED_BLUE 					(1 << DEV_LED_IOID_BLUE)
 #define DEV_LED_RED 					(1 << DEV_LED_IOID_WHITE)
 
-static struct etimer et;
+static struct etimer et, et2;
 static int counterA = 0 ;
 
 PROCESS(button_process, "button process");
@@ -113,13 +113,13 @@ PROCESS_THREAD(button_process, ev, data)
 
 		if(ev == sensors_event && data == &button_left_sensor ) {
 			printf("Left button pushed\n");
-			//watchdog_reboot();
+			watchdog_reboot();
 		} else if(ev == sensors_event && data ==  &button_right_sensor) {
 			printf("Right button pushed, time: %ds\n", (int)(counterA*0.5));
 			if(buzzer_state()) {
 				buzzer_stop();
 			} else {
-				//buzzer_start(1000);
+				buzzer_start(1000);
 			}
 		}
 
@@ -136,18 +136,66 @@ PROCESS_THREAD(ledpack_process, ev, data)
 
 	printf("Hello from led process\n");
 
+	ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_IOID_WHITE);
+	ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_IOID_RED);
+	ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_IOID_GREEN);
+	ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_IOID_BLUE);
+
+	ti_lib_gpio_pin_write(DEV_LED_WHITE, 0);
+	ti_lib_gpio_pin_write(DEV_LED_RED, 0);
+	ti_lib_gpio_pin_write(DEV_LED_GREEN, 0);
+	ti_lib_gpio_pin_write(DEV_LED_BLUE, 0);
+
+	etimer_set(&et2, CLOCK_SECOND);
 
 	while(1) {
-
-		ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_IOID_WHITE);
-		ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_IOID_GREEN);
-		ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_IOID_RED);
-		ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_IOID_BLUE);
-		
-		ti_lib_gpio_pin_write(DEV_LED_RED, 0);
-		ti_lib_gpio_pin_write(DEV_LED_GREEN, 1);
+		static int sel = 0;
 
 		PROCESS_YIELD();
+
+		if(ev == PROCESS_EVENT_TIMER) {
+			if(data == &et2) {
+				if( sel == 0) {
+
+					ti_lib_gpio_pin_write(DEV_LED_WHITE, 1);
+					ti_lib_gpio_pin_write(DEV_LED_RED, 0);
+					ti_lib_gpio_pin_write(DEV_LED_GREEN, 0);
+					ti_lib_gpio_pin_write(DEV_LED_BLUE, 0);
+
+					sel++;
+
+				} else if( sel == 1) {
+
+					ti_lib_gpio_pin_write(DEV_LED_WHITE, 0);
+					ti_lib_gpio_pin_write(DEV_LED_RED, 1);
+					ti_lib_gpio_pin_write(DEV_LED_GREEN, 0);
+					ti_lib_gpio_pin_write(DEV_LED_BLUE, 0);
+
+					sel++;
+
+				} else if( sel == 2) {
+					
+					ti_lib_gpio_pin_write(DEV_LED_WHITE, 0);
+					ti_lib_gpio_pin_write(DEV_LED_RED, 0);
+					ti_lib_gpio_pin_write(DEV_LED_GREEN, 1);
+					ti_lib_gpio_pin_write(DEV_LED_BLUE, 0);
+
+					sel++;
+
+				} else {
+
+					ti_lib_gpio_pin_write(DEV_LED_WHITE, 0);
+					ti_lib_gpio_pin_write(DEV_LED_RED, 0);
+					ti_lib_gpio_pin_write(DEV_LED_GREEN, 0);
+					ti_lib_gpio_pin_write(DEV_LED_BLUE, 1);
+
+					sel = 0;
+				}
+
+				printf("blinking led devpack\n");
+				etimer_set(&et2, CLOCK_SECOND);
+			}
+		}
 
 	}
 
