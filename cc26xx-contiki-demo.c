@@ -161,62 +161,23 @@ PROCESS_THREAD(ledpack_process, ev, data)
 
 	led_pwm(1000, DEV_LED_IOID_WHITE); 
 
-	// ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_IOID_WHITE);
-	// ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_IOID_RED);
-	// ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_IOID_GREEN);
-	// ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_IOID_BLUE);
-
-	// ti_lib_gpio_pin_write(DEV_LED_WHITE, 0);
-	// ti_lib_gpio_pin_write(DEV_LED_RED, 0);
-	// ti_lib_gpio_pin_write(DEV_LED_GREEN, 0);
-	// ti_lib_gpio_pin_write(DEV_LED_BLUE, 0);
-
 	etimer_set(&et2, CC26XX_LED_PACK_INTERVAL);
 
 	while(1) {
-		static int sel = 0;
+		static int cnt = 0;
 
 		PROCESS_YIELD();
 
 		if(ev == PROCESS_EVENT_TIMER) {
 			if(data == &et2) {
-				// if( sel == 0) {
 
-				// 	ti_lib_gpio_pin_write(DEV_LED_WHITE, 1);
-				// 	ti_lib_gpio_pin_write(DEV_LED_RED, 0);
-				// 	ti_lib_gpio_pin_write(DEV_LED_GREEN, 0);
-				// 	ti_lib_gpio_pin_write(DEV_LED_BLUE, 0);
+				led_pwm(cnt, DEV_LED_IOID_WHITE); 
 
-				// 	sel++;
-
-				// } else if( sel == 1) {
-
-				// 	ti_lib_gpio_pin_write(DEV_LED_WHITE, 0);
-				// 	ti_lib_gpio_pin_write(DEV_LED_RED, 1);
-				// 	ti_lib_gpio_pin_write(DEV_LED_GREEN, 0);
-				// 	ti_lib_gpio_pin_write(DEV_LED_BLUE, 0);
-
-				// 	sel++;
-
-				// } else if( sel == 2) {
-					
-				// 	ti_lib_gpio_pin_write(DEV_LED_WHITE, 0);
-				// 	ti_lib_gpio_pin_write(DEV_LED_RED, 0);
-				// 	ti_lib_gpio_pin_write(DEV_LED_GREEN, 1);
-				// 	ti_lib_gpio_pin_write(DEV_LED_BLUE, 0);
-
-				// 	sel++;
-
-				// } else {
-
-				// 	ti_lib_gpio_pin_write(DEV_LED_WHITE, 0);
-				// 	ti_lib_gpio_pin_write(DEV_LED_RED, 0);
-				// 	ti_lib_gpio_pin_write(DEV_LED_GREEN, 0);
-				// 	ti_lib_gpio_pin_write(DEV_LED_BLUE, 1);
-
-				// 	sel = 0;
-				// }
-
+				if(cnt < 14000) {
+					cnt += 100;
+				} else {
+					cnt = 0;
+				}
 				printf("blinking led devpack\n");
 				etimer_set(&et2, CC26XX_LED_PACK_INTERVAL);
 			}
