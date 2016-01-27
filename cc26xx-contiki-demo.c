@@ -119,7 +119,8 @@ PROCESS_THREAD(button_process, ev, data)
 
 }
 
-void led_white_pwm(int freq, int ioid_pin) {
+void led_pwm(int freq, uint32_t ioid_pin) {
+	uint32_t load;
 
 	/* Enable GPT0 clocks under active, sleep, deep sleep */
 	ti_lib_prcm_peripheral_run_enable(PRCM_PERIPH_TIMER0);
@@ -154,7 +155,7 @@ PROCESS_THREAD(ledpack_process, ev, data)
 
 	printf("Hello from led process\n");
 
-	led_white_pwm(1000, DEV_LED_IOID_WHITE); 
+	led_pwm(1000, DEV_LED_IOID_WHITE); 
 
 	// ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_IOID_WHITE);
 	// ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_IOID_RED);
