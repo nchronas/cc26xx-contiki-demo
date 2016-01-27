@@ -20,7 +20,7 @@
 #define DEV_LED_WHITE					(1 << DEV_LED_IOID_WHITE)
 #define DEV_LED_GREEN 					(1 << DEV_LED_IOID_GREEN)
 #define DEV_LED_BLUE 					(1 << DEV_LED_IOID_BLUE)
-#define DEV_LED_RED 					(1 << DEV_LED_IOID_WHITE)
+#define DEV_LED_RED 					(1 << DEV_LED_IOID_RED)
 
 static struct etimer et, et2;
 static int counterA = 0 ;
