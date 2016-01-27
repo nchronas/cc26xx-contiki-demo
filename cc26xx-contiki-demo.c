@@ -11,6 +11,7 @@
 #include <stdint.h>
 
 #define CC26XX_DEMO_LOOP_INTERVAL       (CLOCK_SECOND / 2)
+#define CC26XX_LED_PACK_INTERVAL       (CLOCK_SECOND / 5)
 
 #define DEV_LED_IOID_WHITE				BOARD_IOID_DP0
 #define DEV_LED_IOID_GREEN 				BOARD_IOID_DP1
@@ -34,11 +35,6 @@ AUTOSTART_PROCESSES(&cc26xx_contiki_demo_process, &button_process, &ledpack_proc
 int uart_rx_callback(unsigned char c)
 {
 	cc26xx_uart_write_byte(c);
-	if(c == 'a') {
-		ti_lib_gpio_pin_write(DEV_LED_WHITE, 1);
-	} else if(c == 's') {
-		ti_lib_gpio_pin_write(DEV_LED_WHITE, 0);
-	} 
 	return 1;
 }
 
@@ -113,19 +109,41 @@ PROCESS_THREAD(button_process, ev, data)
 
 		if(ev == sensors_event && data == &button_left_sensor ) {
 			printf("Left button pushed\n");
-			watchdog_reboot();
 		} else if(ev == sensors_event && data ==  &button_right_sensor) {
 			printf("Right button pushed, time: %ds\n", (int)(counterA*0.5));
-			if(buzzer_state()) {
-				buzzer_stop();
-			} else {
-				buzzer_start(1000);
-			}
 		}
 
 	}
 
 	PROCESS_END();
+
+}
+
+void led_white_pwm(int freq, int ioid_pin) {
+
+	/* Enable GPT0 clocks under active, sleep, deep sleep */
+	ti_lib_prcm_peripheral_run_enable(PRCM_PERIPH_TIMER0);
+	ti_lib_prcm_peripheral_sleep_enable(PRCM_PERIPH_TIMER0);
+	ti_lib_prcm_peripheral_deep_sleep_enable(PRCM_PERIPH_TIMER0);
+	ti_lib_prcm_load_set();
+	while(!ti_lib_prcm_load_get());
+
+	/* Drive the I/O ID with GPT0 / Timer A */
+	ti_lib_ioc_port_configure_set(DEV_LED_IOID_WHITE, IOC_PORT_MCU_PORT_EVENT0,
+	                            IOC_STD_OUTPUT);
+
+	/* GPT0 / Timer A: PWM, Interrupt Enable */
+	HWREG(GPT0_BASE + GPT_O_TAMR) = (TIMER_CFG_A_PWM & 0xFF) | GPT_TAMR_TAPWMIE;
+
+	ti_lib_timer_disable(GPT0_BASE, TIMER_A);
+
+    load = (GET_MCU_CLOCK / freq);
+
+    ti_lib_timer_load_set(GPT0_BASE, TIMER_A, load);
+    ti_lib_timer_match_set(GPT0_BASE, TIMER_A, load / 2);
+
+    /* Start */
+    ti_lib_timer_enable(GPT0_BASE, TIMER_A);
 
 }
 
@@ -136,17 +154,19 @@ PROCESS_THREAD(ledpack_process, ev, data)
 
 	printf("Hello from led process\n");
 
-	ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_IOID_WHITE);
-	ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_IOID_RED);
-	ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_IOID_GREEN);
-	ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_IOID_BLUE);
+	led_white_pwm(1000, DEV_LED_IOID_WHITE); 
 
-	ti_lib_gpio_pin_write(DEV_LED_WHITE, 0);
-	ti_lib_gpio_pin_write(DEV_LED_RED, 0);
-	ti_lib_gpio_pin_write(DEV_LED_GREEN, 0);
-	ti_lib_gpio_pin_write(DEV_LED_BLUE, 0);
+	// ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_IOID_WHITE);
+	// ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_IOID_RED);
+	// ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_IOID_GREEN);
+	// ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_IOID_BLUE);
 
-	etimer_set(&et2, CLOCK_SECOND);
+	// ti_lib_gpio_pin_write(DEV_LED_WHITE, 0);
+	// ti_lib_gpio_pin_write(DEV_LED_RED, 0);
+	// ti_lib_gpio_pin_write(DEV_LED_GREEN, 0);
+	// ti_lib_gpio_pin_write(DEV_LED_BLUE, 0);
+
+	etimer_set(&et2, CC26XX_LED_PACK_INTERVAL);
 
 	while(1) {
 		static int sel = 0;
@@ -155,45 +175,45 @@ PROCESS_THREAD(ledpack_process, ev, data)
 
 		if(ev == PROCESS_EVENT_TIMER) {
 			if(data == &et2) {
-				if( sel == 0) {
+				// if( sel == 0) {
 
-					ti_lib_gpio_pin_write(DEV_LED_WHITE, 1);
-					ti_lib_gpio_pin_write(DEV_LED_RED, 0);
-					ti_lib_gpio_pin_write(DEV_LED_GREEN, 0);
-					ti_lib_gpio_pin_write(DEV_LED_BLUE, 0);
+				// 	ti_lib_gpio_pin_write(DEV_LED_WHITE, 1);
+				// 	ti_lib_gpio_pin_write(DEV_LED_RED, 0);
+				// 	ti_lib_gpio_pin_write(DEV_LED_GREEN, 0);
+				// 	ti_lib_gpio_pin_write(DEV_LED_BLUE, 0);
 
-					sel++;
+				// 	sel++;
 
-				} else if( sel == 1) {
+				// } else if( sel == 1) {
 
-					ti_lib_gpio_pin_write(DEV_LED_WHITE, 0);
-					ti_lib_gpio_pin_write(DEV_LED_RED, 1);
-					ti_lib_gpio_pin_write(DEV_LED_GREEN, 0);
-					ti_lib_gpio_pin_write(DEV_LED_BLUE, 0);
+				// 	ti_lib_gpio_pin_write(DEV_LED_WHITE, 0);
+				// 	ti_lib_gpio_pin_write(DEV_LED_RED, 1);
+				// 	ti_lib_gpio_pin_write(DEV_LED_GREEN, 0);
+				// 	ti_lib_gpio_pin_write(DEV_LED_BLUE, 0);
 
-					sel++;
+				// 	sel++;
 
-				} else if( sel == 2) {
+				// } else if( sel == 2) {
 					
-					ti_lib_gpio_pin_write(DEV_LED_WHITE, 0);
-					ti_lib_gpio_pin_write(DEV_LED_RED, 0);
-					ti_lib_gpio_pin_write(DEV_LED_GREEN, 1);
-					ti_lib_gpio_pin_write(DEV_LED_BLUE, 0);
+				// 	ti_lib_gpio_pin_write(DEV_LED_WHITE, 0);
+				// 	ti_lib_gpio_pin_write(DEV_LED_RED, 0);
+				// 	ti_lib_gpio_pin_write(DEV_LED_GREEN, 1);
+				// 	ti_lib_gpio_pin_write(DEV_LED_BLUE, 0);
 
-					sel++;
+				// 	sel++;
 
-				} else {
+				// } else {
 
-					ti_lib_gpio_pin_write(DEV_LED_WHITE, 0);
-					ti_lib_gpio_pin_write(DEV_LED_RED, 0);
-					ti_lib_gpio_pin_write(DEV_LED_GREEN, 0);
-					ti_lib_gpio_pin_write(DEV_LED_BLUE, 1);
+				// 	ti_lib_gpio_pin_write(DEV_LED_WHITE, 0);
+				// 	ti_lib_gpio_pin_write(DEV_LED_RED, 0);
+				// 	ti_lib_gpio_pin_write(DEV_LED_GREEN, 0);
+				// 	ti_lib_gpio_pin_write(DEV_LED_BLUE, 1);
 
-					sel = 0;
-				}
+				// 	sel = 0;
+				// }
 
 				printf("blinking led devpack\n");
-				etimer_set(&et2, CLOCK_SECOND);
+				etimer_set(&et2, CC26XX_LED_PACK_INTERVAL);
 			}
 		}
 
