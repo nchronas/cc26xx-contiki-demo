@@ -155,7 +155,7 @@ PROCESS_THREAD(ledpack_process, ev, data)
 
 	printf("Hello from led process\n");
 
-	led_pwm(100, DEV_LED_IOID_WHITE); 
+	led_pwm(10, DEV_LED_IOID_WHITE); 
 
 	// ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_IOID_WHITE);
 	// ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_IOID_RED);
