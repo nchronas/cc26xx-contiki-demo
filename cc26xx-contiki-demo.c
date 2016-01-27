@@ -26,6 +26,8 @@
 static struct etimer et, et2;
 static int counterA = 0 ;
 
+LPM_MODULE(led_module, NULL, NULL, NULL, LPM_DOMAIN_PERIPH);
+
 PROCESS(button_process, "button process");
 PROCESS(ledpack_process, "led audio devpack process");
 
@@ -135,6 +137,8 @@ void led_pwm(int freq, uint32_t ioid_pin) {
 
 	/* GPT0 / Timer A: PWM, Interrupt Enable */
 	HWREG(GPT0_BASE + GPT_O_TAMR) = (TIMER_CFG_A_PWM & 0xFF) | GPT_TAMR_TAPWMIE;
+
+	lpm_register_module(&led_module);
 
 	ti_lib_timer_disable(GPT0_BASE, TIMER_A);
 
