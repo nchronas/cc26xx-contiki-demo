@@ -11,8 +11,8 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#define CC26XX_DEMO_LOOP_INTERVAL       (CLOCK_SECOND / 2)
-#define CC26XX_LED_PACK_INTERVAL       (CLOCK_SECOND / 5)
+#define CC26XX_DEMO_LOOP_INTERVAL	(CLOCK_SECOND / 2)
+#define CC26XX_LED_PACK_INTERVAL		(CLOCK_SECOND / 5)
 
 #define DEV_LED_IOID_WHITE				BOARD_IOID_DP0
 #define DEV_LED_IOID_GREEN 				BOARD_IOID_DP1
@@ -57,7 +57,7 @@ PROCESS_THREAD(cc26xx_contiki_demo_process, ev, data)
 	//static struct mt_thread thread;
 
 	PROCESS_BEGIN();
-	
+
 	//mt_start(&thread, thread_entry, NULL);
 
 	printf("Hello Contiki!!!\nCC26XX contiki demo\n");
@@ -81,7 +81,6 @@ PROCESS_THREAD(cc26xx_contiki_demo_process, ev, data)
 				counterA++;
 
 				leds_toggle(LEDS_ALL);
-				
 
 				//if(counterA % 2) {
 				//	printf("Starting thread\n");
@@ -160,7 +159,7 @@ PROCESS_THREAD(ledpack_process, ev, data)
 
 	printf("Hello from led process\n");
 
-	led_pwm(10, DEV_LED_IOID_WHITE); 
+	led_pwm(1000, DEV_LED_IOID_WHITE); 
 
 	// ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_IOID_WHITE);
 	// ti_lib_rom_ioc_pin_type_gpio_output(DEV_LED_IOID_RED);
