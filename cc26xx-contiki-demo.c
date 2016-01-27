@@ -5,6 +5,7 @@
 #include "board-peripherals.h"
 #include "cc26xx-uart.h"
 #include "sys/mt.h"
+#include "lpm.h"
 #include "ti-lib.h"
 
 #include <stdio.h>
