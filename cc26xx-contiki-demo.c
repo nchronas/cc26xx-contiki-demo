@@ -144,8 +144,8 @@ void led_pwm(int freq, uint32_t ioid_pin) {
 
     load = (GET_MCU_CLOCK / freq);
 
-    ti_lib_timer_load_set(GPT0_BASE, TIMER_A, load);
-    ti_lib_timer_match_set(GPT0_BASE, TIMER_A, load / 2);
+    ti_lib_timer_load_set(GPT0_BASE, TIMER_A, 14000);
+    ti_lib_timer_match_set(GPT0_BASE, TIMER_A, 10);
 
     /* Start */
     ti_lib_timer_enable(GPT0_BASE, TIMER_A);
@@ -154,12 +154,8 @@ void led_pwm(int freq, uint32_t ioid_pin) {
 
 void led_pwm_update(int freq, uint32_t ioid_pin) {
 
-	ti_lib_timer_disable(GPT0_BASE, TIMER_A);
+    ti_lib_timer_match_set(GPT0_BASE, TIMER_A, freq);
 
-    ti_lib_timer_load_set(GPT0_BASE, TIMER_A, freq);
-    ti_lib_timer_match_set(GPT0_BASE, TIMER_A, 0);
-
-    ti_lib_timer_enable(GPT0_BASE, TIMER_A);
 }
 
 PROCESS_THREAD(ledpack_process, ev, data)
