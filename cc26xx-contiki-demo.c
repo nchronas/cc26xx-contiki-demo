@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#define CC26XX_DEMO_LOOP_INTERVAL	(CLOCK_SECOND / 2)
+#define CC26XX_DEMO_LOOP_INTERVAL		(CLOCK_SECOND / 2)
 #define CC26XX_LED_PACK_INTERVAL		(CLOCK_SECOND / 5)
 
 #define DEV_LED_IOID_WHITE				BOARD_IOID_DP0
@@ -142,53 +142,53 @@ void led_pwm_start(int freq, uint32_t ioid_pin) {
 	ti_lib_timer_disable(GPT0_BASE, TIMER_A);
 
 
-    ti_lib_timer_load_set(GPT0_BASE, TIMER_A, 14000);
-    ti_lib_timer_match_set(GPT0_BASE, TIMER_A, 10);
+	ti_lib_timer_load_set(GPT0_BASE, TIMER_A, 14000);
+	ti_lib_timer_match_set(GPT0_BASE, TIMER_A, 10);
 
-    /* Start */
-    ti_lib_timer_enable(GPT0_BASE, TIMER_A);
+	/* Start */
+	ti_lib_timer_enable(GPT0_BASE, TIMER_A);
 
 }
 
 void led_pwm_stop(uint32_t ioid_pin)
 {
 
-  /*
-   * Unregister the buzzer module from LPM. This will effectively release our
-   * lock for the PERIPH PD allowing it to be powered down (unless some other
-   * module keeps it on)
-   */
-  lpm_unregister_module(&led_module);
+	/*
+	* Unregister the buzzer module from LPM. This will effectively release our
+	* lock for the PERIPH PD allowing it to be powered down (unless some other
+	* module keeps it on)
+	*/
+	lpm_unregister_module(&led_module);
 
-  /* Stop the timer */
-  ti_lib_timer_disable(GPT0_BASE, TIMER_A);
+	/* Stop the timer */
+	ti_lib_timer_disable(GPT0_BASE, TIMER_A);
 
-  /*
-   * Stop the module clock:
-   *
-   * Currently GPT0 is in use by clock_delay_usec (GPT0/TB) and by this
-   * module here (GPT0/TA).
-   *
-   * clock_delay_usec
-   * - is definitely not running when we enter here and
-   * - handles the module clock internally
-   *
-   * Thus, we can safely change the state of module clocks here.
-   */
-  ti_lib_prcm_peripheral_run_disable(PRCM_PERIPH_TIMER0);
-  ti_lib_prcm_peripheral_sleep_disable(PRCM_PERIPH_TIMER0);
-  ti_lib_prcm_peripheral_deep_sleep_disable(PRCM_PERIPH_TIMER0);
-  ti_lib_prcm_load_set();
-  while(!ti_lib_prcm_load_get());
+	/*
+	* Stop the module clock:
+	*
+	* Currently GPT0 is in use by clock_delay_usec (GPT0/TB) and by this
+	* module here (GPT0/TA).
+	*
+	* clock_delay_usec
+	* - is definitely not running when we enter here and
+	* - handles the module clock internally
+	*
+	* Thus, we can safely change the state of module clocks here.
+	*/
+	ti_lib_prcm_peripheral_run_disable(PRCM_PERIPH_TIMER0);
+	ti_lib_prcm_peripheral_sleep_disable(PRCM_PERIPH_TIMER0);
+	ti_lib_prcm_peripheral_deep_sleep_disable(PRCM_PERIPH_TIMER0);
+	ti_lib_prcm_load_set();
+	while(!ti_lib_prcm_load_get());
 
-  /* Un-configure the pin */
-  ti_lib_ioc_pin_type_gpio_input(ioid_pin);
-  ti_lib_ioc_io_input_set(ioid_pin, IOC_INPUT_DISABLE);
+	/* Un-configure the pin */
+	ti_lib_ioc_pin_type_gpio_input(ioid_pin);
+	ti_lib_ioc_io_input_set(ioid_pin, IOC_INPUT_DISABLE);
 }
 
 void led_pwm_update(int freq, uint32_t ioid_pin) {
 
-    ti_lib_timer_match_set(GPT0_BASE, TIMER_A, freq);
+	ti_lib_timer_match_set(GPT0_BASE, TIMER_A, freq);
 
 }
 
