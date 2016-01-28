@@ -121,8 +121,7 @@ PROCESS_THREAD(button_process, ev, data)
 
 }
 
-void led_pwm(int freq, uint32_t ioid_pin) {
-	uint32_t load;
+void led_pwm_start(int freq, uint32_t ioid_pin) {
 
 	/* Enable GPT0 clocks under active, sleep, deep sleep */
 	ti_lib_prcm_peripheral_run_enable(PRCM_PERIPH_TIMER0);
@@ -142,7 +141,6 @@ void led_pwm(int freq, uint32_t ioid_pin) {
 
 	ti_lib_timer_disable(GPT0_BASE, TIMER_A);
 
-    load = (GET_MCU_CLOCK / freq);
 
     ti_lib_timer_load_set(GPT0_BASE, TIMER_A, 14000);
     ti_lib_timer_match_set(GPT0_BASE, TIMER_A, 10);
@@ -150,6 +148,42 @@ void led_pwm(int freq, uint32_t ioid_pin) {
     /* Start */
     ti_lib_timer_enable(GPT0_BASE, TIMER_A);
 
+}
+
+void led_pwm_stop(uint32_t ioid_pin)
+{
+
+  /*
+   * Unregister the buzzer module from LPM. This will effectively release our
+   * lock for the PERIPH PD allowing it to be powered down (unless some other
+   * module keeps it on)
+   */
+  lpm_unregister_module(&led_module);
+
+  /* Stop the timer */
+  ti_lib_timer_disable(GPT0_BASE, TIMER_A);
+
+  /*
+   * Stop the module clock:
+   *
+   * Currently GPT0 is in use by clock_delay_usec (GPT0/TB) and by this
+   * module here (GPT0/TA).
+   *
+   * clock_delay_usec
+   * - is definitely not running when we enter here and
+   * - handles the module clock internally
+   *
+   * Thus, we can safely change the state of module clocks here.
+   */
+  ti_lib_prcm_peripheral_run_disable(PRCM_PERIPH_TIMER0);
+  ti_lib_prcm_peripheral_sleep_disable(PRCM_PERIPH_TIMER0);
+  ti_lib_prcm_peripheral_deep_sleep_disable(PRCM_PERIPH_TIMER0);
+  ti_lib_prcm_load_set();
+  while(!ti_lib_prcm_load_get());
+
+  /* Un-configure the pin */
+  ti_lib_ioc_pin_type_gpio_input(ioid_pin);
+  ti_lib_ioc_io_input_set(ioid_pin, IOC_INPUT_DISABLE);
 }
 
 void led_pwm_update(int freq, uint32_t ioid_pin) {
@@ -160,29 +194,48 @@ void led_pwm_update(int freq, uint32_t ioid_pin) {
 
 PROCESS_THREAD(ledpack_process, ev, data)
 {
+	static uint32_t temp_pin;
 
 	PROCESS_BEGIN();
 
 	printf("Hello from led process\n");
 
-	led_pwm(1000, DEV_LED_IOID_WHITE); 
+	temp_pin = DEV_LED_IOID_WHITE;
+	led_pwm_start(1000, temp_pin); 
 
 	etimer_set(&et2, CC26XX_LED_PACK_INTERVAL);
 
 	while(1) {
-		static int cnt = 0;
+		static int cnt = 0, sel = 0;
+
 
 		PROCESS_YIELD();
 
 		if(ev == PROCESS_EVENT_TIMER) {
 			if(data == &et2) {
 
-				led_pwm_update(cnt, DEV_LED_IOID_WHITE); 
+				led_pwm_update(cnt, temp_pin); 
 
 				if(cnt < 12000) {
 					cnt += 1000;
 				} else {
 					cnt = 0;
+					led_pwm_stop( temp_pin);
+					if( sel == 0 ) {
+						temp_pin = DEV_LED_IOID_WHITE;
+						sel++;
+					} else if( sel == 1 ) {
+						temp_pin = DEV_LED_IOID_RED;
+						sel++;
+					} else if( sel == 2 ) {
+						temp_pin = DEV_LED_IOID_GREEN;
+						sel++;
+					} else {
+						temp_pin = DEV_LED_IOID_BLUE;
+						sel = 0;
+					}
+					led_pwm_start(1000, temp_pin); 
+
 				}
 				printf("blinking led devpack\n");
 				etimer_set(&et2, CC26XX_LED_PACK_INTERVAL);
