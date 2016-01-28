@@ -131,7 +131,7 @@ void led_pwm_start(int freq, uint32_t ioid_pin) {
 	while(!ti_lib_prcm_load_get());
 
 	/* Drive the I/O ID with GPT0 / Timer A */
-	ti_lib_ioc_port_configure_set(DEV_LED_IOID_WHITE, IOC_PORT_MCU_PORT_EVENT0,
+	ti_lib_ioc_port_configure_set(ioid_pin, IOC_PORT_MCU_PORT_EVENT0,
 	                            IOC_STD_OUTPUT);
 
 	/* GPT0 / Timer A: PWM, Interrupt Enable */
