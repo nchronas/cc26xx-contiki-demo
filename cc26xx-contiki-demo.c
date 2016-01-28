@@ -220,6 +220,7 @@ PROCESS_THREAD(ledpack_process, ev, data)
 					cnt += 1000;
 				} else {
 					cnt = 0;
+					
 					led_pwm_stop( temp_pin);
 					if( sel == 0 ) {
 						temp_pin = DEV_LED_IOID_WHITE;
@@ -237,7 +238,7 @@ PROCESS_THREAD(ledpack_process, ev, data)
 					led_pwm_start(1000, temp_pin); 
 
 				}
-				printf("blinking led devpack\n");
+				printf("blinking led devpack, pin %d\n", temp_pin);
 				etimer_set(&et2, CC26XX_LED_PACK_INTERVAL);
 			}
 		}
