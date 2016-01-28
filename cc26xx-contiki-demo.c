@@ -180,7 +180,7 @@ PROCESS_THREAD(ledpack_process, ev, data)
 				led_pwm_update(cnt, DEV_LED_IOID_WHITE); 
 
 				if(cnt < 12000) {
-					cnt += 100;
+					cnt += 500;
 				} else {
 					cnt = 0;
 				}
